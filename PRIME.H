@@ -4,7 +4,7 @@ fvVectorMatrix UprimeEqn
     fvm::ddt(U)
   + fvm::div(phi, U)
   + turbulence->divDevReff(U)
-  // + fvm::SuSp(-fvc::div(phi),U)
+  + fvm::SuSp(-fvc::div(phi),U)
 );
 
 rAU = 1.0/UprimeEqn.A();
