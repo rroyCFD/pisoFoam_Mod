@@ -67,6 +67,11 @@ int main(int argc, char *argv[])
         #include "CourantNo.H"
         //#include "setDeltaT.H" // for fixed courant number, variable timeStep
 
+        // store old values for temporal discretization,
+        // & temporal correction to phi in Rhie-Chow flux calculation.
+        U.storeOldTime();
+        phi.storeOldTime();
+
         // --- PISO loop
         for (int corr=0; corr<nCorr; corr++)
         {
