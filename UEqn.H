@@ -1,4 +1,5 @@
-// step 2: Momentum predictor
+// step 2: Solve implicitly the momentum equation given by Eq. (15.70)
+// to obtain a new velocity field v*.
 fvVectorMatrix UEqn
 (
     fvm::ddt(U)

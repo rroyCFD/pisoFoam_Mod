@@ -12,6 +12,10 @@ Description
     Transient solver for incompressible flow.
     Turbulence modelling is generic, i.e. laminar, RAS or LES may be selected.
 
+    Algorithom is implemented followed by the outline in book:
+        The Finite Volume Method in Computational Fluid Dynamics
+        Section 15.7 (SIMPLE family of algorithoms)
+
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
