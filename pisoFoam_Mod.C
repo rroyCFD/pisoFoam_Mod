@@ -38,10 +38,10 @@ int main(int argc, char *argv[])
     #include "initContinuityErrs.H"
     //#include "readTimeControls.H" // for fixed courant number
 
-    #include "TaylorGreenFiles/readAndDeclareVariables.H"
-    #include "TaylorGreenFiles/createErrorFields.H"
-    #include "TaylorGreenFiles/initialize.H"
-    #include "TaylorGreenFiles/errorNorm.H"
+    // #include "TaylorGreenFiles/readAndDeclareVariables.H"
+    // #include "TaylorGreenFiles/createErrorFields.H"
+    // #include "TaylorGreenFiles/initialize.H"
+    // #include "TaylorGreenFiles/errorNorm.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,6 +57,8 @@ int main(int argc, char *argv[])
         -(linearInterpolate(fvc::grad(p)) & ed)*ed
         + (faceGradient.snGrad(p))*ed;
 
+    // adding gradU for open-boundary pressure estimation
+    volTensorField gradU("gradU", fvc::grad(U));
 
     // run-time coverge and advance loop
     while (runTime.loop())
@@ -89,10 +91,12 @@ int main(int argc, char *argv[])
 
         #include "continuityErrs.H"
 
-        #include "TaylorGreenFiles/errorNorm.H"
-        #include "TaylorGreenFiles/globalProperties.H"
+        // #include "TaylorGreenFiles/errorNorm.H"
+        // #include "TaylorGreenFiles/globalProperties.H"
 
         turbulence->correct();
+
+        gradU = fvc::grad(U);
 
         runTime.write();
 
