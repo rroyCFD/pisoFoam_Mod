@@ -75,13 +75,13 @@ int main(int argc, char *argv[])
         phi.storeOldTime();
 
         // --- PISO loop
-        for (int corr=0; corr<nCorr; corr++)
+        for (int corr=1; corr<=nCorr; corr++)
         {
             #include "UEqn.H"
             #include "ppEqn.H"
 
             // PRIME loop
-            for (int nPrime=0; nPrime < nPrimeIterations; nPrime++)
+            for (int nPrime=1; nPrime <= nPrimeIterations; nPrime++)
             {
                 #include "PRIME.H"
             }

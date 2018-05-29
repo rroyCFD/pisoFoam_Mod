@@ -3,10 +3,11 @@ const dictionary& pisoDict = mesh.solutionDict().subDict("PISO");
 // const int nOuterCorr =
 //     pisoDict.lookupOrDefault<int>("nOuterCorrectors", 1);
 
+// default minimum execution 1
 const int nCorr =  pisoDict.lookupOrDefault<int>("nCorrectors", 1);
 // Info<< "nCorrectors: " << nCorr << endl;
 
-// default minimum execution 1
+// default minimum execution 0
 const int nNonOrthCorr = pisoDict.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);
 // Info << "nNonOrthogonalCorrectors: " << nNonOrthCorr << endl;
 
