@@ -96,6 +96,9 @@ int main(int argc, char *argv[])
 
         turbulence->correct();
 
+        //update nuEff
+        nuEff = turbulence->nuEff();
+
         gradU = fvc::grad(U);
 
         runTime.write();

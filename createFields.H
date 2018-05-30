@@ -82,3 +82,21 @@
     (
         incompressible::turbulenceModel::New(U, phi, laminarTransport)
     );
+
+    Info<< "Creating field nuEff\n" << endl;
+    volScalarField nuEff
+    (
+        IOobject
+        (
+            "nuEff",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        //turbulence->nuEff() // can't find in lookupObjectRegistry, in BC implementation
+        mesh,
+        dimensionedScalar("nuEff",dimensionSet(0, 2, -1, 0, 0, 0, 0), 0.0)
+    );
+    nuEff = turbulence->nuEff();
+    Info << "max(nuEff): " << max(nuEff) << endl;
