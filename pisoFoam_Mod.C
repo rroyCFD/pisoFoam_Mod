@@ -36,7 +36,6 @@ int main(int argc, char *argv[])
     #include "readTransportProperties.H"
     #include "createFields.H"
     #include "initContinuityErrs.H"
-    //#include "readTimeControls.H" // for fixed courant number
 
     // #include "TaylorGreenFiles/readAndDeclareVariables.H"
     // #include "TaylorGreenFiles/createErrorFields.H"
@@ -44,30 +43,30 @@ int main(int argc, char *argv[])
     // #include "TaylorGreenFiles/errorNorm.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-    Info<< "\nStarting time loop\n" << endl;
-
     //Rhie Chow interpolation stuff
     const surfaceVectorField ed = mesh.delta()()/mag(mesh.delta()());
     Foam::fv::orthogonalSnGrad<scalar> faceGradient(mesh);
 
-    //surfaceVectorField gradp_avg_f = linearInterpolate(fvc::grad(p));
     surfaceVectorField gradpDiff_f
         =
         -(linearInterpolate(fvc::grad(p)) & ed)*ed
         + (faceGradient.snGrad(p))*ed;
 
-    // adding gradU for open-boundary pressure estimation
-    volTensorField gradU("gradU", fvc::grad(U));
+    // update Fields
+    Info <<"\nUpdating boundary fields..." << endl;
+    p.correctBoundaryConditions();
+    U.correctBoundaryConditions();
 
+    Info<< "\nStarting time loop\n" << endl;
     // run-time coverge and advance loop
     while (runTime.loop())
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
         #include "readPISOControls.H"
+        #include "readTimeControls.H" // for fixed courant number
         #include "CourantNo.H"
-        //#include "setDeltaT.H" // for fixed courant number, variable timeStep
+        #include "setDeltaT.H" // for fixed courant number, variable timeStep
 
         // store old values for temporal discretization,
         // & temporal correction to phi in Rhie-Chow flux calculation.
@@ -98,8 +97,6 @@ int main(int argc, char *argv[])
 
         //update nuEff
         nuEff = turbulence->nuEff();
-
-        gradU = fvc::grad(U);
 
         runTime.write();
 
