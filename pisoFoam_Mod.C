@@ -77,14 +77,16 @@ int main(int argc, char *argv[])
         for (int corr=1; corr<=nCorr; corr++)
         {
             #include "UEqn.H"
-            #include "ppEqn.H"
 
-            // PRIME loop
-            for (int nPrime=1; nPrime <= nPrimeIterations; nPrime++)
-            {
-                #include "PRIME.H"
-            }
-            // end of PRIME loop
+
+                #include "ppEqn.H"
+
+                // PRIME loop
+                for (int nPrime=1; nPrime <= nPrimeIterations; nPrime++)
+                {
+                    #include "PRIME.H"
+                }
+                // end of PRIME loop
 
         }// end of corrector loop
 

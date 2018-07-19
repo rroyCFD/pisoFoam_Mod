@@ -3,8 +3,6 @@
 //---------------------------------------------------------------------------------//
 // Step 6: Using the latest available velocity and pressure fields,
 // calculate the coefficients of the momentum equation and solve it explicitly.
-
-// Info << "nPrime: " << nPrime+1 << endl;
 fvVectorMatrix UprimeEqn
 (
     fvm::ddt(U)
@@ -16,20 +14,18 @@ fvVectorMatrix UprimeEqn
 rAU = 1.0/UprimeEqn.A();
 
 // explicit calculation of velocity with mass conserved velocity, phi and updated pressure
-U = rAU*(UprimeEqn.H() -fvc::grad(p));
+U = rAU*(UprimeEqn.H() - fvc::grad(p));  // eq. 15.176
 
 
 //------------------------------------------------------------------------------------------------//
 // Step 7: Update the mass flow rate at the cell faces using the Rhie-Chow interpolation technique.
 rAUf = linearInterpolate(rAU);
-rAUTf = rAUf/runTime.deltaT();
 
 gradpDiff_f =   -(linearInterpolate(fvc::grad(p)) & ed)*ed
                 + (faceGradient.snGrad(p))*ed;
 
 phi = (fvc::interpolate(U) & mesh.Sf())
     - (rAUf*gradpDiff_f & mesh.Sf())
-    // + rAUTf*(phi_old - (U_old_f& mesh.Sf())); // Euler
     + fvc::ddtPhiCorr(rAU, U, phi);
 
 
@@ -39,27 +35,42 @@ phi = (fvc::interpolate(U) & mesh.Sf())
 pp.internalField() = scalar(0.0);
 pp.correctBoundaryConditions();
 
-fvScalarMatrix ppPrimeEqn
-(
-- fvm::laplacian(rAUf, pp,"laplacian(pDiff,pp)")
-+ fvc::div(phi)
-);
+// Non-orthogonal pressure corrector loop
+for (int nonOrth=0; nonOrth <= nNonOrthCorr; nonOrth++)
+{
+    fvScalarMatrix ppPrimeEqn
+    (
+    - fvm::laplacian(rAUf, pp,"laplacian(pDiff,pp)")
+    + fvc::div(phi)
+    );
 
-ppPrimeEqn.setReference(pRefCell, pRefValue);
+    ppPrimeEqn.setReference(pRefCell, pRefValue);
 
-ppPrimeEqn.solve(mesh.solver("pp"));
+    // final pressure coorection solved upto the tightest convergence tolerance
+    if(corr == nCorr && nPrime == nPrimeIterations && nonOrth == nNonOrthCorr)
+    {
+        ppPrimeEqn.solve(mesh.solver("ppFinal"));
+    }
+    else
+    {
+        ppPrimeEqn.solve(mesh.solver("pp"));
+    }
+    // Info << "solved ppPrimeEqn" << endl;
+    //------------------------------------------------------------------------------------------------//
+    // Step 9: Update pressure, velocity, and mass flow rate fields using expressions similar
+    // to the ones given in Eq. (15.101).
+    // update fields at the end of non-orthogonal correction loop
+    if(nonOrth == nNonOrthCorr)
+    {
+        phi += ppPrimeEqn.flux();
 
+        p += pp;
+        p.correctBoundaryConditions();
 
-//------------------------------------------------------------------------------------------------//
-// Step 9: Update pressure, velocity, and mass flow rate fields using expressions similar
-// to the ones given in Eq. (15.101).
-phi += ppPrimeEqn.flux();
+        U -= rAU*fvc::grad(pp);
+        U.correctBoundaryConditions();
+    }
 
-p += pp;
-p.correctBoundaryConditions();
+}// end of non-orthogonal correction loop
 
-U -= rAU*fvc::grad(pp);
-U.correctBoundaryConditions();
-
-// >>>>>
-// Go to step 6 and repeat based on the desired number of PRIME steps.
+// >>> Go to step 6 and repeat based on the desired number of PRIME steps.
