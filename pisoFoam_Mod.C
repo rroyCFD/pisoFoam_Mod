@@ -37,10 +37,10 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     #include "initContinuityErrs.H"
 
-    // #include "TaylorGreenFiles/readAndDeclareVariables.H"
-    // #include "TaylorGreenFiles/createErrorFields.H"
-    // #include "TaylorGreenFiles/initialize.H"
-    // #include "TaylorGreenFiles/errorNorm.H"
+    #include "TaylorGreenFiles/readAndDeclareVariables.H"
+    #include "TaylorGreenFiles/createErrorFields.H"
+    #include "TaylorGreenFiles/initialize.H"
+    #include "TaylorGreenFiles/errorNorm.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     //Rhie Chow interpolation stuff
@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
 
     surfaceVectorField gradpDiff_f
         =
-        -(linearInterpolate(fvc::grad(p)) & ed)*ed
-        + (faceGradient.snGrad(p))*ed;
+        -(linearInterpolate(fvc::grad(p)) & ed) * ed
+        + (faceGradient.snGrad(p)) * ed;
 
     // update Fields
     Info <<"\nUpdating boundary fields..." << endl;
@@ -77,27 +77,24 @@ int main(int argc, char *argv[])
         for (int corr=1; corr<=nCorr; corr++)
         {
             #include "UEqn.H"
+            #include "ppEqn.H"
 
-
-                #include "ppEqn.H"
-
-                // PRIME loop
-                for (int nPrime=1; nPrime <= nPrimeIterations; nPrime++)
-                {
-                    #include "PRIME.H"
-                }
-                // end of PRIME loop
+            // PRIME loop
+            for (int nPrime=1; nPrime <= nPrimeIterations; nPrime++)
+            {
+                #include "PRIME.H"
+            }
+            // end of PRIME loop
 
         }// end of corrector loop
 
         #include "continuityErrs.H"
 
-        // #include "TaylorGreenFiles/errorNorm.H"
-        // #include "TaylorGreenFiles/globalProperties.H"
+        #include "TaylorGreenFiles/errorNorm.H"
+        #include "TaylorGreenFiles/globalProperties.H"
 
+        //update turbulence variables and nuEff
         turbulence->correct();
-
-        //update nuEff
         nuEff = turbulence->nuEff();
 
         runTime.write();

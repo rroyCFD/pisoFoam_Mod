@@ -9,7 +9,7 @@ const int nPrimeIterations = pisoDict.lookupOrDefault<int>("nPrimeIterations", 1
 // default value 0; minimum execution 1
 const int nNonOrthCorr = pisoDict.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);
 
-if(runTime.value() == (runTime.deltaT().value() + runTime.startTime().value()) )
+if(runTime.value() == (runTime.deltaTValue() + runTime.startTime().value()) )
 {
     Info << "nCorrectors: " << nCorr << endl;
     Info << "nPrimeIterations: " << nPrimeIterations << endl;

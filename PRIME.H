@@ -40,8 +40,9 @@ for (int nonOrth=0; nonOrth <= nNonOrthCorr; nonOrth++)
 {
     fvScalarMatrix ppPrimeEqn
     (
-    - fvm::laplacian(rAUf, pp,"laplacian(pDiff,pp)")
-    + fvc::div(phi)
+        fvm::laplacian(rAUf, pp,"laplacian(pDiff,pp)")
+        ==
+        fvc::div(phi)
     );
 
     ppPrimeEqn.setReference(pRefCell, pRefValue);
@@ -56,19 +57,21 @@ for (int nonOrth=0; nonOrth <= nNonOrthCorr; nonOrth++)
         ppPrimeEqn.solve(mesh.solver("pp"));
     }
     // Info << "solved ppPrimeEqn" << endl;
+
+
     //------------------------------------------------------------------------------------------------//
     // Step 9: Update pressure, velocity, and mass flow rate fields using expressions similar
     // to the ones given in Eq. (15.101).
     // update fields at the end of non-orthogonal correction loop
     if(nonOrth == nNonOrthCorr)
     {
-        phi += ppPrimeEqn.flux();
-
         p += pp;
         p.correctBoundaryConditions();
 
         U -= rAU*fvc::grad(pp);
         U.correctBoundaryConditions();
+
+        phi -= ppPrimeEqn.flux();
     }
 
 }// end of non-orthogonal correction loop
