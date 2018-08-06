@@ -37,10 +37,10 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     #include "initContinuityErrs.H"
 
-    #include "TaylorGreenFiles/readAndDeclareVariables.H"
-    #include "TaylorGreenFiles/createErrorFields.H"
-    #include "TaylorGreenFiles/initialize.H"
-    #include "TaylorGreenFiles/errorNorm.H"
+//     #include "TaylorGreenFiles/readAndDeclareVariables.H"
+//     #include "TaylorGreenFiles/createErrorFields.H"
+//     #include "TaylorGreenFiles/initialize.H"
+//     #include "TaylorGreenFiles/errorNorm.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     //Rhie Chow interpolation stuff
@@ -90,8 +90,8 @@ int main(int argc, char *argv[])
 
         #include "continuityErrs.H"
 
-        #include "TaylorGreenFiles/errorNorm.H"
-        #include "TaylorGreenFiles/globalProperties.H"
+//         #include "TaylorGreenFiles/errorNorm.H"
+//         #include "TaylorGreenFiles/globalProperties.H"
 
         //update turbulence variables and nuEff
         turbulence->correct();
