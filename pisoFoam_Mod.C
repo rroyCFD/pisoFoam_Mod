@@ -77,6 +77,8 @@ int main(int argc, char *argv[])
         for (int corr=1; corr<=nCorr; corr++)
         {
             #include "UEqn.H"
+
+            //Info << "Before pp solve, pressure at pRefCell: " << getRefCellValue(p, pRefCell) << endl;
             #include "ppEqn.H"
 
             // PRIME loop
@@ -89,6 +91,9 @@ int main(int argc, char *argv[])
         }// end of corrector loop
 
         #include "continuityErrs.H"
+
+        // Info << "After pp solve at pRefCell, pressure: " << getRefCellValue(p, pRefCell)
+        //      << " pressure correction: " << getRefCellValue(pp, pRefCell) << endl;
 
 //         #include "TaylorGreenFiles/errorNorm.H"
 //         #include "TaylorGreenFiles/globalProperties.H"

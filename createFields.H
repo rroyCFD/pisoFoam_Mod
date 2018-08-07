@@ -1,4 +1,4 @@
-    Info<< "Reading field p\n" << endl;
+    Info<< "\nReading field p" << endl;
     volScalarField p
     (
         IOobject
@@ -12,6 +12,34 @@
         mesh
     );
 
+    const dictionary& pisoDict = mesh.solutionDict().subDict("PISO");
+    const bool   pRefOn    = pisoDict.lookupOrDefault<bool>("pRefOn", false);
+    label  pRefCell  = pisoDict.lookupOrDefault<scalar>("pRefCell", 0);
+    scalar pRefValue = pisoDict.lookupOrDefault<scalar>("pRefValue", 0);
+
+    if(pRefOn)
+    {
+        Info <<" pRefOn: " << pRefOn
+            << " pRefCell: "<< pRefCell
+            << " pRefValue: "<< pRefValue
+            << endl;
+
+        scalar refCellValue = getRefCellValue(p, pRefCell);
+
+        if(mag(pRefValue -refCellValue) > SMALL)
+        {
+            Info << "Un-corrected pressure at pRefCell: " << refCellValue << endl;
+            p.internalField() += (pRefValue -refCellValue);
+            // boundary values are update in the  *.C file
+            Info << "Corrected    pressure at pRefCell: " << getRefCellValue(p, pRefCell) << endl;
+        }
+    }
+
+    setRefCell(p, pisoDict, pRefCell, pRefValue);
+
+
+    //-----------------------------------------------------------------------------------------//
+    Info << "Creating pressure-coorection field pp" << endl;
     const volScalarField::GeometricBoundaryField& pbf = p.boundaryField();
     wordList pbt = pbf.types();
 
@@ -24,7 +52,7 @@
             runTime.timeName(),
             mesh,
             IOobject::NO_READ,
-            IOobject::AUTO_WRITE
+            IOobject::NO_WRITE // AUTO_WRITE
         ),
         mesh,
         dimensionedScalar("zero", p.dimensions(), 0.0),
@@ -45,7 +73,8 @@
 
     }
 
-    Info<< "Reading field U\n" << endl;
+    //-----------------------------------------------------------------------------------------//
+    Info<< "\nReading field U" << endl;
     volVectorField U
     (
         IOobject
@@ -61,21 +90,6 @@
 
     #include "createPhi.H"
 
-    const dictionary& pisoDict = mesh.solutionDict().subDict("PISO");
-    const bool pRefOn = pisoDict.lookupOrDefault("pRefOn", false);
-    label  pRefCell =  pisoDict.lookupOrDefault<scalar>("pRefCell", 0);
-    scalar pRefValue = pisoDict.lookupOrDefault<scalar>("pRefValue", 0);
-
-    if(pRefOn)
-    {
-        Info << "pRefOn: " << pRefOn
-            <<"  pRefCell: "<< pRefCell
-            << "  pRefValue: "<< pRefValue
-            <<endl;
-    }
-
-    setRefCell(p, pisoDict, pRefCell, pRefValue);
-
     singlePhaseTransportModel laminarTransport(U, phi);
 
     autoPtr<incompressible::turbulenceModel> turbulence
@@ -83,7 +97,9 @@
         incompressible::turbulenceModel::New(U, phi, laminarTransport)
     );
 
-    Info<< "Creating field nuEff\n" << endl;
+
+    //-----------------------------------------------------------------------------------------//
+    Info<< "Creating field nuEff" << endl;
     volScalarField nuEff
     (
         IOobject

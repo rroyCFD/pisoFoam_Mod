@@ -45,7 +45,8 @@ for (int nonOrth=0; nonOrth <= nNonOrthCorr; nonOrth++)
         fvc::div(phi)
     );
 
-    ppPrimeEqn.setReference(pRefCell, pRefValue);
+    // ppPrimeEqn.setReference(pRefCell, pRefValue);
+    ppPrimeEqn.setReference(pRefCell, (pRefValue - getRefCellValue(p, pRefCell)));
 
     // final pressure coorection solved upto the tightest convergence tolerance
     if(corr == nCorr && nPrime == nPrimeIterations && nonOrth == nNonOrthCorr)
