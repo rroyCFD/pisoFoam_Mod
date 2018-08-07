@@ -37,10 +37,11 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     #include "initContinuityErrs.H"
 
-//     #include "TaylorGreenFiles/readAndDeclareVariables.H"
-//     #include "TaylorGreenFiles/createErrorFields.H"
-//     #include "TaylorGreenFiles/initialize.H"
-//     #include "TaylorGreenFiles/errorNorm.H"
+    #include "TaylorGreenFiles/readAndDeclareVariables.H"
+    #include "TaylorGreenFiles/createErrorFields.H"
+    #include "TaylorGreenFiles/initialize.H"
+    #include "TaylorGreenFiles/errorNorm.H"
+    #include "TaylorGreenFiles/globalProperties.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     //Rhie Chow interpolation stuff
@@ -95,8 +96,8 @@ int main(int argc, char *argv[])
         // Info << "After pp solve at pRefCell, pressure: " << getRefCellValue(p, pRefCell)
         //      << " pressure correction: " << getRefCellValue(pp, pRefCell) << endl;
 
-//         #include "TaylorGreenFiles/errorNorm.H"
-//         #include "TaylorGreenFiles/globalProperties.H"
+        #include "TaylorGreenFiles/errorNorm.H"
+        #include "TaylorGreenFiles/globalProperties.H"
 
         //update turbulence variables and nuEff
         turbulence->correct();

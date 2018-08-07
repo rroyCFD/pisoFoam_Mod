@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------------------------//
 // Step 3: Update the mass flow rate at the cell faces using the Rhie-Chow interpolation
-// technique (Eq. 15.100) to obtain a momentum satisfying mass flow rate field m^∗f.
+// technique (Eq. 15.100 & 15.201) to obtain a momentum satisfying mass flow rate field m^∗f.
 volScalarField rAU(1.0/UEqn.A());
 surfaceScalarField rAUf("rAUf",linearInterpolate(rAU));
 
