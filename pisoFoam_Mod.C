@@ -45,13 +45,7 @@ int main(int argc, char *argv[])
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     //Rhie Chow interpolation stuff
-    const surfaceVectorField ed = mesh.delta()()/mag(mesh.delta()());
-    Foam::fv::orthogonalSnGrad<scalar> faceGradient(mesh);
-
-    surfaceVectorField gradpDiff_f
-        =
-        -(linearInterpolate(fvc::grad(p)) & ed) * ed
-        + (faceGradient.snGrad(p)) * ed;
+    #include "RhieChow.H"
 
     // update Fields
     Info <<"\nUpdating boundary fields..." << endl;
@@ -59,7 +53,7 @@ int main(int argc, char *argv[])
     U.correctBoundaryConditions();
 
     Info<< "\nStarting time loop\n" << endl;
-    // run-time coverge and advance loop
+    // run-time converge and advance loop
     while (runTime.loop())
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
@@ -67,7 +61,7 @@ int main(int argc, char *argv[])
         #include "readPISOControls.H"
         #include "readTimeControls.H" // for fixed courant number
         #include "CourantNo.H"
-        #include "setDeltaT.H" // for fixed courant number, variable timeStep
+        #include "setDeltaT.H" // for fixed courant number, i.e. variable timeStep
 
         // store old values for temporal discretization,
         // & temporal correction to phi in Rhie-Chow flux calculation.

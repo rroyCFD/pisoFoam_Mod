@@ -28,7 +28,7 @@ for (int nonOrth=0; nonOrth <= nNonOrthCorr; nonOrth++)
         fvc::div(phi)
     );
 
-    // set pp at refCell such that after solving pp,subsequent update of pressure (p),
+    // set pp at refCell such that after solving pp and subsequent update of pressure,
     // pressure value at pRefCell is within solver tolerance of prescribed pRefValue.
 
     // ppEqn.setReference(pRefCell, pRefValue);
