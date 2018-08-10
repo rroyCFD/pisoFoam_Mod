@@ -1,0 +1,94 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+ "p|pp"
+  {
+      solver          PCG;
+      preconditioner
+        {
+                preconditioner                  GAMG;
+                tolerance                       1e-06;
+                relTol                          1e-02;
+                smoother                        DICGaussSeidel;
+                nPreSweeps                      0;
+                nPostSweeps                     2;
+                cacheAgglomeration              on;
+                agglomerator                    faceAreaPair;
+                nCellsInCoarsestLevel           500;
+                mergeLevels                     1;
+        }
+      tolerance                 1e-08;
+      relTol                    0;
+  }
+    
+  "pFinal|ppFinal"
+  {
+      solver          PCG;
+      preconditioner
+        {
+                preconditioner                  GAMG;
+                tolerance                       1e-06;
+                relTol                          1e-03;
+                smoother                        DICGaussSeidel;
+                nPreSweeps                      0;
+                nPostSweeps                     2;
+                cacheAgglomeration              on;
+                agglomerator                    faceAreaPair;
+                nCellsInCoarsestLevel           100;
+                mergeLevels                     1;
+        }
+      tolerance                 1e-08;
+      relTol                    0;
+
+  } 
+
+    U
+    {
+      solver          PBiCG; // PCG; //  smoothSolver;
+      preconditioner  DILU; // DIC; //  smoother GaussSeidel;
+      tolerance       1e-10;// 1e-08;
+      relTol          0; //1e-3;
+      minIter         1;
+    }
+    
+    "(nuTilda|nuSgs|k|omega|flm|fmm)"
+    {
+      solver          PBiCG; // smoothSolver;
+      preconditioner  DILU; // smoother GaussSeidel;
+      tolerance       1e-09;// 1e-08;
+      relTol          1e-03;
+      minIter         1;
+    }    
+    
+}
+
+
+PISO
+{
+    nCorrectors              1;
+    nNonOrthogonalCorrectors 0;
+    nPrimeIterations         1;
+
+    pRefOn                  false; // true;
+    pRefCell                55;
+    pRefValue               0;
+}
+
+
+// ************************************************************************* //
