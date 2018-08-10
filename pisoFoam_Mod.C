@@ -63,14 +63,15 @@ int main(int argc, char *argv[])
         #include "CourantNo.H"
         #include "setDeltaT.H" // for fixed courant number, i.e. variable timeStep
 
-        // store old values for temporal discretization,
-        // & temporal correction to phi in Rhie-Chow flux calculation.
-        U.storeOldTime();
-        phi.storeOldTime();
+        // // store old values for temporal discretization,
+        // // & temporal correction to phi in Rhie-Chow flux calculation.
+        // U.storeOldTime(); // destroys solver accuracy > reason unknown
+        // phi.storeOldTime(); // destroys solver accuracy
 
         // --- PISO loop
         for (int corr=1; corr<=nCorr; corr++)
         {
+            Info << "U.nOldTimes(): " << U.nOldTimes() << "\tphi.nOldTimes(): " << phi.nOldTimes() << endl;
             #include "UEqn.H"
 
             //Info << "Before pp solve, pressure at pRefCell: " << getRefCellValue(p, pRefCell) << endl;
