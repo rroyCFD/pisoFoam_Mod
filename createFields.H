@@ -30,7 +30,7 @@
         {
             Info << "Un-corrected pressure at pRefCell: " << refCellValue << endl;
             p.internalField() += (pRefValue -refCellValue);
-            // boundary values are update in the  *.C file
+            // boundary values are updated in the  *.C file
             Info << "Corrected    pressure at pRefCell: " << getRefCellValue(p, pRefCell) << endl;
         }
     }
@@ -42,6 +42,16 @@
     Info << "Creating pressure-coorection field pp" << endl;
     const volScalarField::GeometricBoundaryField& pbf = p.boundaryField();
     wordList pbt = pbf.types();
+
+    // prepare the boundary condition types for pressure-correction field
+    wordList ppbt = pbt;
+    forAll(ppbt, b)
+    {
+        if(ppbt[b] == "timeVaryingMappedFixedValue")
+        {
+            ppbt[b] = "fixedValue";
+        }
+    }
 
     volScalarField pp
     (
@@ -56,7 +66,7 @@
         ),
         mesh,
         dimensionedScalar("zero", p.dimensions(), 0.0),
-        pbt
+        ppbt
     );
 
 
