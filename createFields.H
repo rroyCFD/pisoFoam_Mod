@@ -19,27 +19,34 @@
 
     if(pRefOn)
     {
-        Info <<" pRefOn: " << pRefOn
-            << " pRefCell: "<< pRefCell
-            << " pRefValue: "<< pRefValue
-            << endl;
+        Info <<"pRefOn: " << pRefOn << " pRefCell: "<< pRefCell << " pRefValue: "<< pRefValue  << endl;
 
-        scalar refCellValue = getRefCellValue(p, pRefCell);
-
-        if(mag(pRefValue -refCellValue) > SMALL)
+        if(mag(pRefValue - p[pRefCell]) > VSMALL)
         {
-            Info << "Un-corrected pressure at pRefCell: " << refCellValue << endl;
-            p.internalField() += (pRefValue -refCellValue);
-            // boundary values are updated in the  *.C file
-            Info << "Corrected    pressure at pRefCell: " << getRefCellValue(p, pRefCell) << endl;
-        }
+            if(Pstream::master())
+            {
+                Pout << "Un-corrected pressure at pRefCell: " << p[pRefCell] << endl;
+            }
+
+            p += (pRefValue -p[pRefCell])*dimensionedScalar("unitPressure", p.dimensions(), 1.0);
+
+            if(Pstream::master())
+            {
+                Pout << "Corrected    pressure at pRefCell: " << p[pRefCell] << endl;
+            }
+        } // end of pressurecorrection loop
+
+        Info << "writing corrected pressure field" << endl;
+        p.correctBoundaryConditions();
+        p.write();
     }
 
+     // If the field fieldRef needs referencing find the reference cell nearest
     setRefCell(p, pisoDict, pRefCell, pRefValue);
 
 
     //-----------------------------------------------------------------------------------------//
-    Info << "Creating pressure-coorection field pp" << endl;
+    Info << "\nCreating pressure-coorection field pp" << endl;
     const volScalarField::GeometricBoundaryField& pbf = p.boundaryField();
     wordList pbt = pbf.types();
 
@@ -109,7 +116,7 @@
 
 
     //-----------------------------------------------------------------------------------------//
-    Info<< "Creating field nuEff" << endl;
+    Info<< "\nCreating field nuEff" << endl;
     volScalarField nuEff
     (
         IOobject

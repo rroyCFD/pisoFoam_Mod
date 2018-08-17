@@ -91,6 +91,11 @@ int main(int argc, char *argv[])
         // Info << "After pp solve at pRefCell, pressure: " << getRefCellValue(p, pRefCell)
         //      << " pressure correction: " << getRefCellValue(pp, pRefCell) << endl;
 
+        if(pRefOn)
+        {
+            Info << "pressure at reference cell: " << p[pRefCell] << endl;
+        }
+
         #include "TaylorGreenFiles/errorNorm.H"
         #include "TaylorGreenFiles/globalProperties.H"
 
