@@ -68,13 +68,14 @@
             "pp",
             runTime.timeName(),
             mesh,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE // AUTO_WRITE
+            IOobject::READ_IF_PRESENT, // NO_READ,
+            IOobject::AUTO_WRITE // NO_WRITE
         ),
         mesh,
         dimensionedScalar("zero", p.dimensions(), 0.0),
         ppbt
     );
+    Info << "Pressure correction fields boundary types:\n" << pp.boundaryField().types() << endl;
 
 
     // Set pp boundary values
